@@ -161,7 +161,7 @@
                 </button>
             </div>
 
-            <!-- STEP 2: ข้อมูลผู้รับ (ระบบพิมพ์ค้นหาที่อยู่อัตโนมัติด้วย jquery.Thailand.js) -->
+            <!-- STEP 2: ข้อมูลผู้รับ -->
             <div id="step2" class="step-content space-y-6">
                 <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
                     <div class="border-b border-stone-100 pb-3">
@@ -226,7 +226,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs text-stone-500 mb-1.5 font-light">รหัสไปรษณีย์</label>
-                                <input type="text" id="addrZipcode" placeholder="อัตโนมัติ" class="w-full px-4 py-3 bg-stone-100/80 rounded-2xl border border-stone-200 text-xs font-mono text-stone-800 font-bold">
+                                <input type="text" id="addrZipcode" placeholder="อัตโนมัติ" class="w-full px-4 py-3 bg-stone-100/80 rounded-2xl border border-stone-200 text-xs text-mono text-stone-800 font-bold">
                             </div>
                         </div>
                     </div>
@@ -304,6 +304,17 @@
         </form>
     </div>
 
+    <!-- LOADING OVERLAY -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-stone-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-xs rounded-3xl p-6 shadow-2xl border border-stone-200 text-center space-y-4">
+            <div class="w-12 h-12 border-4 border-stone-900 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <div class="space-y-1">
+                <h3 class="text-sm font-semibold text-stone-900">กำลังบันทึกคำสั่งซื้อ...</h3>
+                <p class="text-[11px] text-stone-500 font-light">กำลังประมวลผลสลิปและข้อมูล กรุณารอสักครู่</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         const sizes = [
             { code: "SS", bust: '34"' }, { code: "S", bust: '36"' }, { code: "M", bust: '38"' },
@@ -312,7 +323,6 @@
             { code: "6XL", bust: '52"' }, { code: "7XL", bust: '54"' }
         ];
 
-        // อัปเดตรูปภาพจริงทั้ง 4 แบบ ตามที่คุณส่งมา
         const shirtImages = {
             "สีชมพู_คอวี แขนยาว": "https://lh3.googleusercontent.com/d/1Ke-nBQp6-PfPcAXh_UlU_Z0oTQ9_y9xH=s800",
             "สีชมพู_คอวี แขนสั้น": "https://lh3.googleusercontent.com/d/1IRUD6w7looLr7jK4zxcDiaFHsUT5Xgur=s800",
@@ -331,7 +341,6 @@
         let reqId = newReqId();
         let slipCheck = '';
 
-        // เริ่มต้นระบบค้นหาที่อยู่ด้วย jquery.Thailand.js
         $.Thailand({
             database: 'https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/database/db.json',
             $district: $('#addrSubdistrict'),
@@ -736,6 +745,9 @@
                 addressVal = 'มารับเอง: ' + document.getElementById('pickupLocationSelect').value;
             }
 
+            // แสดงหน้าจอ "กรุณารอสักครู่..." ทันทีที่กด
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
@@ -752,6 +764,10 @@
                     })
                 });
                 const r = await res.json();
+                
+                // ซ่อนหน้าจอโหลดเมื่อเสร็จสิ้น
+                document.getElementById('loadingOverlay').classList.add('hidden');
+
                 if (!r.ok) throw new Error(r.error);
                 alert(`สั่งซื้อสำเร็จ! เลขที่ออเดอร์: ${r.id}\nยอดชำระ: ${r.total.toLocaleString()} บาท`);
                 document.getElementById('orderForm').reset();
@@ -759,6 +775,8 @@
                 renderCart();
                 goToStep(1);
             } catch (err) {
+                // ซ่อนหน้าจอโหลดกรณีเกิดข้อผิดพลาด
+                document.getElementById('loadingOverlay').classList.add('hidden');
                 alert('เกิดข้อผิดพลาด: ' + err.message);
             }
         }
