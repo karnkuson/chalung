@@ -6,6 +6,13 @@
     <title>CHALUNG CHARITY CUP 2026</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jquery.Thailand.js CSS & JS -->
+    <link rel="stylesheet" href="https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dist/jquery.Thailand.min.css">
+    <script src="https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dependencies/JQL.min.js"></script>
+    <script src="https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dependencies/typeahead.bundle.js"></script>
+    <script src="https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dist/jquery.Thailand.min.js"></script>
     <!-- Tesseract.js for OCR -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
@@ -14,6 +21,10 @@
         .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px); }
         .step-content { display: none; }
         .step-content.active { display: block; }
+        .twitter-typeahead { width: 100%; }
+        .tt-menu { background: #fff; border: 1px solid #e7e5e4; border-radius: 1rem; margin-top: 4px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); width: 100%; max-height: 200px; overflow-y: auto; z-index: 50; }
+        .tt-suggestion { padding: 10px 16px; font-size: 12px; cursor: pointer; }
+        .tt-suggestion:hover { background: #f5f5f4; }
     </style>
 </head>
 <body class="min-h-screen pb-24">
@@ -69,7 +80,6 @@
             <!-- STEP 1: เลือกสินค้า -->
             <div id="step1" class="step-content active space-y-6">
                 
-                <!-- ส่วนแสดงรูปภาพเสื้อจำลอง -->
                 <div class="bg-white p-5 rounded-3xl border border-stone-200/80 shadow-xs text-center space-y-3">
                     <div class="relative overflow-hidden rounded-2xl bg-stone-50 border border-stone-200/60 p-2 max-w-sm mx-auto flex items-center justify-center">
                         <img id="shirtPreviewImg" src="" alt="ตัวอย่างเสื้อ" class="max-h-72 w-auto object-contain transition-all duration-300 drop-shadow-sm">
@@ -86,7 +96,6 @@
                         <span id="priceDisplay" class="text-xl font-bold text-stone-900 bg-stone-100 px-3.5 py-1 rounded-2xl">199.-</span>
                     </div>
 
-                    <!-- เลือกรูปแบบ -->
                     <div>
                         <label class="block text-xs text-stone-600 mb-2 font-medium">1. เลือกรูปแบบเสื้อ</label>
                         <div class="grid grid-cols-2 gap-3">
@@ -101,7 +110,6 @@
                         </div>
                     </div>
 
-                    <!-- เลือกสี -->
                     <div>
                         <label class="block text-xs text-stone-600 mb-2 font-medium">2. เลือกสีเสื้อ</label>
                         <div class="grid grid-cols-2 gap-3">
@@ -116,17 +124,15 @@
                         </div>
                     </div>
 
-                    <!-- เลือกไซส์ -->
                     <div>
                         <div class="flex justify-between items-center mb-2">
                             <label class="text-xs text-stone-600 font-medium">3. เลือกไซส์ (รอบอก)</label>
                             <span id="selectedSizeText" class="text-[11px] font-medium text-stone-500">ไซส์: M (รอบอก 38")</span>
                         </div>
                         <div class="grid grid-cols-4 md:grid-cols-7 gap-2 text-center" id="sizeContainer"></div>
-                        <p class="text-[10px] text-stone-400 mt-2">ℹ️ หมายเหตุ: ไซส์ 5XL ขึ้นไป (5XL, 6XL, 7XL) เพิ่ม +50 บาท | ตัวที่ 2 ขึ้นไป เพิ่ม 10 บาท/ตัว</p>
+                        <p class="text-[10px] text-stone-400 mt-2">ℹ️ หมายเหตุ: ไซส์พิเศษ 5XL ขึ้นไป (5XL, 6XL, 7XL) เพิ่ม +50 บาท | ตัวที่ 2 ขึ้นไป เพิ่ม 10 บาท/ตัว</p>
                     </div>
 
-                    <!-- จำนวน & เพิ่มลงตะกร้า -->
                     <div class="pt-4 border-t border-stone-100 flex items-center gap-3">
                         <div class="flex items-center border border-stone-200 rounded-2xl overflow-hidden bg-stone-50/80 p-1">
                             <button type="button" onclick="changeQty(-1)" class="w-8 h-8 flex items-center justify-center text-stone-600 hover:bg-stone-200 rounded-xl transition-all">-</button>
@@ -139,7 +145,6 @@
                     </div>
                 </div>
 
-                <!-- CART SUMMARY -->
                 <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
                     <div class="flex justify-between items-center border-b border-stone-100 pb-3">
                         <h3 class="text-xs font-semibold text-stone-900 uppercase tracking-widest">ตะกร้าสินค้าของคุณ</h3>
@@ -147,7 +152,7 @@
                     </div>
 
                     <div id="cartItemsList" class="space-y-2.5">
-                        <p class="text-xs text-stone-400 text-center py-4 font-light">ยังไม่มีรายการในตะกร้า (เลือกด้านบนแล้วกดเพิ่มลงตะกร้าค่ะ)</p>
+                        <p class="text-xs text-stone-400 text-center py-4 font-light">ยังไม่มีรายการในตะกร้า</p>
                     </div>
                 </div>
 
@@ -156,12 +161,12 @@
                 </button>
             </div>
 
-            <!-- STEP 2: ชื่อ-สกุล และข้อมูลผู้รับ -->
+            <!-- STEP 2: ข้อมูลผู้รับ (ระบบพิมพ์ค้นหาที่อยู่อัตโนมัติด้วย jquery.Thailand.js) -->
             <div id="step2" class="step-content space-y-6">
-                <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs space-y-5">
+                <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
                     <div class="border-b border-stone-100 pb-3">
                         <span class="text-[10px] text-stone-400 block uppercase tracking-wider font-light">ขั้นตอนที่ 2</span>
-                        <h3 class="text-lg font-semibold text-stone-900">ระบุชื่อ-สกุล และข้อมูลรับสินค้า</h3>
+                        <h3 class="text-lg font-semibold text-stone-900">ระบุชื่อ-สกุล และที่อยู่จัดส่ง</h3>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -189,31 +194,51 @@
                         </div>
                     </div>
 
-                    <!-- เลือกจุดรับเอง (ดึงค่ามาจากที่แอดมินตั้งค่าไว้) -->
+                    <!-- จุดรับเอง -->
                     <div id="pickupBox" class="pt-1" style="display: none;">
                         <label class="block text-xs text-stone-500 mb-1.5 font-light">เลือกจุดมารับสินค้าเอง <span class="text-red-400">*</span></label>
                         <select id="pickupLocationSelect" class="w-full px-4 py-3 bg-stone-50/70 rounded-2xl border border-stone-200/80 text-xs focus:bg-white focus:outline-none focus:border-stone-400 transition-all">
                         </select>
                     </div>
 
-                    <!-- ที่อยู่ส่งพัสดุ -->
-                    <div id="addressBox" class="pt-1">
-                        <label class="block text-xs text-stone-500 mb-1.5 font-light">ที่อยู่จัดส่งพัสดุ <span class="text-red-400">*</span></label>
-                        <textarea id="custAddress" rows="2" placeholder="บ้านเลขที่, ซอย, ถนน, ตำบล, อำเภอ, จังหวัด, รหัสไปรษณีย์" class="w-full px-4 py-3 bg-stone-50/70 rounded-2xl border border-stone-200/80 text-xs focus:bg-white focus:outline-none focus:border-stone-400 transition-all"></textarea>
+                    <!-- ที่อยู่จัดส่งแบบพิมพ์ค้นหาอัตโนมัติ -->
+                    <div id="addressBox" class="space-y-3 pt-1">
+                        <div>
+                            <label class="block text-xs text-stone-500 mb-1.5 font-light">บ้านเลขที่, หมู่บ้าน/อาคาร, ซอย, ถนน <span class="text-red-400">*</span></label>
+                            <input type="text" id="addrDetail" placeholder="เช่น 123/4 หมู่ 5 ซอยเพชรเกษม 2" class="w-full px-4 py-3 bg-stone-50/70 rounded-2xl border border-stone-200/80 text-xs focus:bg-white focus:outline-none focus:border-stone-400 transition-all">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-stone-500 mb-1.5 font-light">ตำบล / แขวง (พิมพ์ค้นหา) <span class="text-red-400">*</span></label>
+                                <input type="text" id="addrSubdistrict" placeholder="พิมพ์ชื่อตำบล..." class="w-full px-4 py-3 bg-stone-50/70 rounded-2xl border border-stone-200/80 text-xs focus:bg-white focus:outline-none focus:border-stone-400 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-stone-500 mb-1.5 font-light">อำเภอ / เขต</label>
+                                <input type="text" id="addrDistrict" placeholder="อัตโนมัติ" class="w-full px-4 py-3 bg-stone-100/80 rounded-2xl border border-stone-200 text-xs text-stone-600">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-stone-500 mb-1.5 font-light">จังหวัด</label>
+                                <input type="text" id="addrProvince" placeholder="อัตโนมัติ" class="w-full px-4 py-3 bg-stone-100/80 rounded-2xl border border-stone-200 text-xs text-stone-600">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-stone-500 mb-1.5 font-light">รหัสไปรษณีย์</label>
+                                <input type="text" id="addrZipcode" placeholder="อัตโนมัติ" class="w-full px-4 py-3 bg-stone-100/80 rounded-2xl border border-stone-200 text-xs font-mono text-stone-800 font-bold">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="flex gap-3">
-                    <button type="button" onclick="goToStep(1)" class="w-1/3 py-4 bg-stone-200 hover:bg-stone-300 text-stone-700 font-medium rounded-2xl transition-all text-xs">
-                        ย้อนกลับ
-                    </button>
-                    <button type="button" onclick="goToStep(3)" class="w-2/3 py-4 bg-stone-900 hover:bg-stone-800 text-white font-medium rounded-2xl shadow-md transition-all text-xs tracking-widest uppercase">
-                        ถัดไป: ไปหน้าชำระเงิน ➔
-                    </button>
+                    <button type="button" onclick="goToStep(1)" class="w-1/3 py-4 bg-stone-200 hover:bg-stone-300 text-stone-700 font-medium rounded-2xl transition-all text-xs">ย้อนกลับ</button>
+                    <button type="button" onclick="goToStep(3)" class="w-2/3 py-4 bg-stone-900 hover:bg-stone-800 text-white font-medium rounded-2xl shadow-md transition-all text-xs tracking-widest uppercase">ถัดไป: ไปหน้าชำระเงิน ➔</button>
                 </div>
             </div>
 
-            <!-- STEP 3: จ่ายเงินและแนบสลิป -->
+            <!-- STEP 3: ชำระเงิน -->
             <div id="step3" class="step-content space-y-6">
                 <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs space-y-6">
                     <div class="border-b border-stone-100 pb-3">
@@ -223,22 +248,30 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                         <div class="bg-stone-50/70 p-6 rounded-3xl border border-stone-200/60 space-y-3 text-center">
-                            <span class="text-[11px] text-stone-500 font-light block">โอนเงินผ่านบัญชีธนาคารกลาง</span>
-                            <div class="p-4 bg-white rounded-2xl border border-stone-200/80 shadow-xs space-y-2.5">
-                                <div>
-                                    <p id="bankName" class="font-semibold text-stone-900 text-xs"></p>
-                                    <p id="accountNo" class="font-mono text-base font-bold text-stone-900 tracking-wider my-1.5"></p>
-                                    <p class="text-[11px] text-stone-600 font-medium px-2 py-1 bg-stone-50 rounded-xl border border-stone-100" id="accountName">ชื่อบัญชี: -</p>
-                                </div>
-                                <button type="button" onclick="copyAccountNo()" class="w-full py-2 px-3 bg-stone-900 text-white rounded-xl text-xs font-medium hover:bg-stone-800 transition-all shadow-xs flex items-center justify-center space-x-1.5">
-                                    <span>📋 คัดลอกเลขบัญชี</span>
-                                </button>
+                            <span class="text-[11px] text-stone-500 font-light block">สแกนคิวอาร์โค้ดพร้อมเพย์เพื่อชำระเงิน</span>
+                            
+                            <div class="p-3 bg-white rounded-2xl border border-stone-200/80 shadow-xs inline-block">
+                                <img id="promptpayQrImg" src="" alt="QR Code พร้อมเพย์" class="w-48 h-48 mx-auto object-contain">
                             </div>
-                            <p class="text-[10px] text-amber-700 font-light">💡 กรุณาโอนตามยอดสุทธิให้ตรงเป๊ะ เพื่อความสะดวกในการตรวจสอบสลิป</p>
+
+                            <div>
+                                <p id="promptpayInfo" class="font-semibold text-emerald-700 text-xs mt-2"></p>
+                                <p id="bankName" class="font-medium text-stone-900 text-xs hidden"></p>
+                                <p id="accountNo" class="font-mono text-sm font-bold text-stone-900 tracking-wider my-0.5 hidden"></p>
+                                <p id="accountName" class="text-[11px] text-stone-600 font-medium px-2 py-1 bg-stone-50 rounded-xl border border-stone-100 inline-block mt-1 hidden">ชื่อบัญชี: -</p>
+                            </div>
+                            <button type="button" onclick="copyAccountNo()" class="w-full py-2 px-3 bg-stone-900 text-white rounded-xl text-xs font-medium hover:bg-stone-800 transition-all shadow-xs flex items-center justify-center space-x-1.5">
+                                <span>📋 คัดลอกเบอร์พร้อมเพย์</span>
+                            </button>
                         </div>
 
                         <div class="space-y-4">
-                            <div class="bg-stone-50/80 p-5 rounded-2xl border border-stone-200/60 space-y-2.5 text-xs">
+                            <div class="bg-stone-50/80 p-4 rounded-2xl border border-stone-200/60 space-y-2 text-xs">
+                                <p class="font-medium text-stone-900 border-b border-stone-200/60 pb-1.5">📦 รายการสินค้าที่คุณเลือก</p>
+                                <div id="step3CartSummary" class="space-y-1.5 max-h-36 overflow-y-auto"></div>
+                            </div>
+
+                            <div class="bg-stone-50/80 p-4 rounded-2xl border border-stone-200/60 space-y-2 text-xs">
                                 <div class="flex justify-between text-stone-500 font-light">
                                     <span>ค่าเสื้อรวม</span>
                                     <span id="subtotalAmount" class="font-medium text-stone-800">0 บาท</span>
@@ -247,7 +280,7 @@
                                     <span>ค่าจัดส่ง</span>
                                     <span id="shippingFeeAmount" class="font-medium text-stone-800">50 บาท</span>
                                 </div>
-                                <div class="border-t border-stone-200/80 pt-3 flex justify-between text-sm font-medium text-stone-900">
+                                <div class="border-t border-stone-200/80 pt-2 flex justify-between text-sm font-medium text-stone-900">
                                     <span>ยอดโอนสุทธิ</span>
                                     <span id="totalAmount" class="text-emerald-700 font-bold text-base">50 บาท</span>
                                 </div>
@@ -264,12 +297,8 @@
                 </div>
 
                 <div class="flex gap-3">
-                    <button type="button" onclick="goToStep(2)" class="w-1/3 py-4 bg-stone-200 hover:bg-stone-300 text-stone-700 font-medium rounded-2xl transition-all text-xs">
-                        ย้อนกลับ
-                    </button>
-                    <button type="submit" id="submitBtn" class="w-2/3 py-4 bg-stone-900 hover:bg-stone-800 text-white font-medium rounded-2xl shadow-md transition-all text-xs tracking-widest uppercase">
-                        ยืนยันคำสั่งซื้อ
-                    </button>
+                    <button type="button" onclick="goToStep(2)" class="w-1/3 py-4 bg-stone-200 hover:bg-stone-300 text-stone-700 font-medium rounded-2xl transition-all text-xs">ย้อนกลับ</button>
+                    <button type="submit" id="submitBtn" class="w-2/3 py-4 bg-stone-900 hover:bg-stone-800 text-white font-medium rounded-2xl shadow-md transition-all text-xs tracking-widest uppercase">ยืนยันคำสั่งซื้อ</button>
                 </div>
             </div>
         </form>
@@ -283,11 +312,12 @@
             { code: "6XL", bust: '52"' }, { code: "7XL", bust: '54"' }
         ];
 
+        // อัปเดตรูปภาพจริงทั้ง 4 แบบ ตามที่คุณส่งมา
         const shirtImages = {
-            "สีน้ำเงิน_คอวี แขนสั้น": "https://lh3.googleusercontent.com/d/1MRNvQEH_skhzE08bn8AoinyVBfR1wyLG=s800", 
-            "สีน้ำเงิน_คอวี แขนยาว": "https://lh3.googleusercontent.com/d/1D1X0pzsSC5tu6U659s49Ls3fNEHJTMsn=s800",
-            "สีชมพู_คอวี แขนสั้น": "https://lh3.googleusercontent.com/d/18NlhgIofaj6huDgsk6F8jHN3FSOvlwE8=s800",
-            "สีชมพู_คอวี แขนยาว": "https://lh3.googleusercontent.com/d/1e5KjRdgiieMOmb-H0V44yuic3OvzRv4-=s800"
+            "สีชมพู_คอวี แขนยาว": "https://lh3.googleusercontent.com/d/1Ke-nBQp6-PfPcAXh_UlU_Z0oTQ9_y9xH=s800",
+            "สีชมพู_คอวี แขนสั้น": "https://lh3.googleusercontent.com/d/1IRUD6w7looLr7jK4zxcDiaFHsUT5Xgur=s800",
+            "สีน้ำเงิน_คอวี แขนยาว": "https://lh3.googleusercontent.com/d/16JPwjU586BbEckfU2CnQhpJKWkULyV6g=s800",
+            "สีน้ำเงิน_คอวี แขนสั้น": "https://lh3.googleusercontent.com/d/1LW6_gYcOD6gbc4mgMTvhYPKJfdlQ8NPs=s800"
         };
 
         let currentItem = { sleeve: "คอวี แขนสั้น", price: 199, color: "สีน้ำเงิน", size: "M", bust: '38"', qty: 1 };
@@ -295,11 +325,20 @@
         let slipBase64 = "";
 
         const API_URL = 'https://script.google.com/macros/s/AKfycbxM4tBJWwjfjURMMYx9AYxK01Es11X5YlGH1_7hfOlDt7wjYlJFwoLBu6N22MM3i4p8aA/exec';
-        let SETTINGS = { shippingEnabled: true, shippingFee: 50, bankName: '', accountNo: '', accountName: '', open: true, closeAt: '', pickupLocations: 'รับที่เทศบาลตำบลฉลุง, รับที่คณะกรรมการชุมชน' };
+        let SETTINGS = { shippingEnabled: true, shippingFee: 50, promptpayId: '', bankName: '', accountNo: '', accountName: '', open: true, closeAt: '', pickupLocations: 'รับที่เทศบาลตำบลฉลุง, รับที่คณะกรรมการชุมชน' };
         
-        function newReqId() { return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'r-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10); }
+        function newReqId() { return (window.crypto && window.crypto.randomUUID) ? crypto.randomUUID() : 'r-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10); }
         let reqId = newReqId();
         let slipCheck = '';
+
+        // เริ่มต้นระบบค้นหาที่อยู่ด้วย jquery.Thailand.js
+        $.Thailand({
+            database: 'https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/database/db.json',
+            $district: $('#addrSubdistrict'),
+            $amphoe: $('#addrDistrict'),
+            $province: $('#addrProvince'),
+            $zipcode: $('#addrZipcode')
+        });
 
         renderSizeButtons();
         updateShirtPreview();
@@ -310,17 +349,12 @@
         function calculateTotalCartSubtotal() {
             let totalSub = 0;
             let currentShirtIndex = 0;
-
             cart.forEach(item => {
                 const basePrice = (item.sleeve === 'คอวี แขนยาว') ? 250 : 199;
                 for (let i = 0; i < item.qty; i++) {
                     let price = basePrice;
-                    if (currentShirtIndex > 0) {
-                        price += 10;
-                    }
-                    if (['5XL', '6XL', '7XL'].includes(item.size)) {
-                        price += 50;
-                    }
+                    if (currentShirtIndex > 0) price += 10;
+                    if (['5XL', '6XL', '7XL'].includes(item.size)) price += 50;
                     totalSub += price;
                     currentShirtIndex++;
                 }
@@ -332,29 +366,33 @@
             const key = currentItem.color + "_" + currentItem.sleeve;
             const imgEl = document.getElementById('shirtPreviewImg');
             const captionEl = document.getElementById('previewCaption');
-            const targetImg = shirtImages[key] || "";
-            
-            if (imgEl) imgEl.src = targetImg;
+            if (imgEl) imgEl.src = shirtImages[key] || "";
             if (captionEl) captionEl.innerText = `ตัวอย่าง: ${currentItem.sleeve} (${currentItem.color})`;
         }
 
         function goToStep(stepNum) {
-            if (stepNum === 2) {
-                if (cart.length === 0) {
-                    alert('กรุณาเลือกสินค้าและกด "เพิ่มลงตะกร้า" ก่อนค่ะ');
-                    return;
-                }
-            }
+            if (stepNum === 2 && cart.length === 0) { alert('กรุณาเลือกสินค้าและกดเพิ่มลงตะกร้าก่อนค่ะ'); return; }
             if (stepNum === 3) {
                 const name = document.getElementById('custName').value.trim();
                 const phone = document.getElementById('custPhone').value.trim();
                 const shippingRadio = document.querySelector('input[name="shippingType"]:checked');
                 const isHome = shippingRadio && shippingRadio.value === 'home';
-                const address = document.getElementById('custAddress').value.trim();
+                
+                const detail = document.getElementById('addrDetail').value.trim();
+                const sub = document.getElementById('addrSubdistrict').value.trim();
+                const dist = document.getElementById('addrDistrict').value.trim();
+                const prov = document.getElementById('addrProvince').value.trim();
+                const zip = document.getElementById('addrZipcode').value.trim();
 
                 if (!name) { alert('กรุณากรอกชื่อ-นามสกุลค่ะ'); return; }
                 if (!phone || !/^\d{9,10}$/.test(phone)) { alert('กรุณากรอกเบอร์โทรศัพท์ 9-10 หลักให้ถูกต้องค่ะ'); return; }
-                if (isHome && !address) { alert('กรุณากรอกที่อยู่จัดส่งพัสดุค่ะ'); return; }
+                if (isHome && (!detail || !sub || !prov)) { 
+                    alert('กรุณากรอกบ้านเลขที่ และเลือกตำบล/แขวงให้ถูกต้องค่ะ'); 
+                    return; 
+                }
+                
+                renderStep3Summary();
+                calc();
             }
 
             document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
@@ -418,17 +456,14 @@
 
         function selectSize(code) {
             const found = sizes.find(x => x.code === code);
-            const bust = found ? found.bust : '';
             currentItem.size = code;
-            currentItem.bust = bust;
-            document.getElementById('selectedSizeText').innerText = `ไซส์: ${code} (รอบอก ${bust})`;
+            currentItem.bust = found ? found.bust : '';
+            document.getElementById('selectedSizeText').innerText = `ไซส์: ${code} (รอบอก ${currentItem.bust})`;
 
             document.querySelectorAll('.size-btn').forEach(btn => {
-                if (btn.dataset.size === code) {
-                    btn.className = "size-btn py-2 border border-stone-900 bg-stone-900 text-white rounded-xl text-[11px] font-medium shadow-xs transition-all";
-                } else {
-                    btn.className = "size-btn py-2 border border-stone-200 bg-white text-stone-700 rounded-xl text-[11px] font-medium hover:border-stone-400 transition-all";
-                }
+                btn.className = btn.dataset.size === code 
+                    ? "size-btn py-2 border border-stone-900 bg-stone-900 text-white rounded-xl text-[11px] font-medium shadow-xs transition-all"
+                    : "size-btn py-2 border border-stone-200 bg-white text-stone-700 rounded-xl text-[11px] font-medium hover:border-stone-400 transition-all";
             });
         }
 
@@ -439,11 +474,8 @@
 
         function addToCart() {
             const existingIndex = cart.findIndex(c => c.sleeve === currentItem.sleeve && c.color === currentItem.color && c.size === currentItem.size);
-            if (existingIndex > -1) {
-                cart[existingIndex].qty += currentItem.qty;
-            } else {
-                cart.push({ ...currentItem });
-            }
+            if (existingIndex > -1) cart[existingIndex].qty += currentItem.qty;
+            else cart.push({ ...currentItem });
             renderCart();
             calc();
         }
@@ -457,12 +489,11 @@
         function renderCart() {
             const list = document.getElementById('cartItemsList');
             const badge = document.getElementById('cartBadge');
-            
             const totalShirtCount = cart.reduce((acc, item) => acc + item.qty, 0);
             badge.innerText = `${totalShirtCount} ตัว (${cart.length} แบบ)`;
 
             if (cart.length === 0) {
-                list.innerHTML = `<p class="text-xs text-stone-400 text-center py-4 font-light">ยังไม่มีรายการในตะกร้า (เลือกด้านบนแล้วกดเพิ่มลงตะกร้าค่ะ)</p>`;
+                list.innerHTML = `<p class="text-xs text-stone-400 text-center py-4 font-light">ยังไม่มีรายการในตะกร้า</p>`;
                 return;
             }
 
@@ -470,7 +501,6 @@
             list.innerHTML = cart.map((item, idx) => {
                 let itemTotal = 0;
                 const basePrice = (item.sleeve === 'คอวี แขนยาว') ? 250 : 199;
-                
                 for (let i = 0; i < item.qty; i++) {
                     let p = basePrice;
                     if (globalShirtIndex > 0) p += 10;
@@ -480,12 +510,8 @@
                 }
 
                 let extraNotes = [];
-                if (['5XL', '6XL', '7XL'].includes(item.size)) {
-                    extraNotes.push('ไซส์พิเศษ 5XL+ เพิ่ม 50.-');
-                }
-                if (totalShirtCount > 1) {
-                    extraNotes.push('ตัวที่ 2+ เพิ่ม 10.-/ตัว');
-                }
+                if (['5XL', '6XL', '7XL'].includes(item.size)) extraNotes.push('ไซส์พิเศษ 5XL+ เพิ่ม +50.-');
+                if (totalShirtCount > 1) extraNotes.push('ตัวที่ 2+ เพิ่ม +10.-/ตัว');
                 let noteHtml = extraNotes.length > 0 ? `<span class="text-amber-700 text-[10px] block mt-0.5 font-medium">ℹ️ (${extraNotes.join(' | ')})</span>` : '';
 
                 return `
@@ -497,39 +523,46 @@
                     </div>
                     <div class="flex items-center space-x-3">
                         <span class="font-semibold text-stone-900 text-sm">${itemTotal.toLocaleString()}.-</span>
-                        <button type="button" onclick="removeFromCart(${idx})" class="text-stone-400 hover:text-red-500 p-1"><svg class="w-4 h-4 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+                        <button type="button" onclick="removeFromCart(${idx})" class="text-stone-400 hover:text-red-500 p-1">✕</button>
                     </div>
                 </div>
             `;}).join('');
         }
 
+        function renderStep3Summary() {
+            const summaryContainer = document.getElementById('step3CartSummary');
+            if (cart.length === 0) {
+                summaryContainer.innerHTML = `<p class="text-stone-400">ไม่มีสินค้า</p>`;
+                return;
+            }
+            summaryContainer.innerHTML = cart.map(item => `
+                <div class="flex justify-between items-center text-stone-700">
+                    <span>• ${item.sleeve} (${item.color}) [ไซส์ ${item.size}]</span>
+                    <span class="font-medium">x${item.qty}</span>
+                </div>
+            `).join('');
+        }
+
         function checkShippingConfig() {
             document.getElementById('shippingFeeText').innerText = SETTINGS.shippingEnabled ? `(+${SETTINGS.shippingFee} บาท)` : '(ส่งฟรี)';
-            document.getElementById('bankName').innerText = SETTINGS.bankName || 'ธนาคาร...';
-            document.getElementById('accountNo').innerText = SETTINGS.accountNo || 'XXXXXXXXXX';
-            document.getElementById('accountName').innerText = 'ชื่อบัญชี: ' + (SETTINGS.accountName || 'นาย ก / นาย ข / นาง ค');
+            document.getElementById('promptpayInfo').innerText = SETTINGS.promptpayId ? `📱 พร้อมเพย์: ${SETTINGS.promptpayId}` : '';
 
             const homeShippingLabel = document.getElementById('homeShippingLabel');
             const pickupRadio = document.querySelector('input[name="shippingType"][value="pickup"]');
 
             if (SETTINGS.shippingEnabled === false) {
                 if (homeShippingLabel) homeShippingLabel.style.display = 'none';
-                if (pickupRadio) {
-                    pickupRadio.checked = true;
-                    toggleShipping();
-                }
+                if (pickupRadio) { pickupRadio.checked = true; toggleShipping(); }
             } else {
                 if (homeShippingLabel) homeShippingLabel.style.display = 'flex';
             }
         }
 
         function copyAccountNo() {
-            const accNo = SETTINGS.accountNo || '';
-            if (!accNo) { alert('ยังไม่ได้กำหนดเลขบัญชี'); return; }
-            navigator.clipboard.writeText(accNo).then(() => {
-                alert('คัดลอกเลขบัญชีแล้ว: ' + accNo);
-            }).catch(() => {
-                alert('ไม่สามารถคัดลอกอัตโนมัติได้');
+            const textToCopy = SETTINGS.promptpayId || SETTINGS.accountNo || '';
+            if (!textToCopy) { alert('ยังไม่ได้กำหนดเลขพร้อมเพย์'); return; }
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('คัดลอกเบอร์พร้อมเพย์สำเร็จ: ' + textToCopy);
             });
         }
 
@@ -538,30 +571,26 @@
             if (cached) {
                 try {
                     const c = JSON.parse(cached);
-                    SETTINGS = { ...c, shippingEnabled: c.shippingEnabled === 'true', shippingFee: Number(c.shippingFee) || 0, open: c.open !== 'false', closeAt: c.closeAt || '', pickupLocations: c.pickupLocations || 'รับที่เทศบาลตำบลฉลุง, รับที่คณะกรรมการชุมชน' };
+                    SETTINGS = { ...c, shippingEnabled: c.shippingEnabled === 'true', shippingFee: Number(c.shippingFee) || 0, open: c.open !== 'false' };
                     checkShippingConfig();
                     calc();
-                    applyOpenState();
-                } catch (e) { console.error(e); }
+                } catch (e) {}
             }
 
             if (API_URL.startsWith('PASTE')) return;
-
             try {
                 const r = await (await fetch(API_URL + '?action=config')).json();
                 if (r.ok) {
                     const c = r.config;
-                    SETTINGS = { ...c, shippingEnabled: c.shippingEnabled === 'true', shippingFee: Number(c.shippingFee) || 0, open: c.open !== 'false', closeAt: c.closeAt || '', pickupLocations: c.pickupLocations || 'รับที่เทศบาลตำบลฉลุง, รับที่คณะกรรมการชุมชน' };
+                    SETTINGS = { ...c, shippingEnabled: c.shippingEnabled === 'true', shippingFee: Number(c.shippingFee) || 0, open: c.open !== 'false' };
                     localStorage.setItem('chalung_settings', JSON.stringify(c));
                     checkShippingConfig();
                     calc();
-                    applyOpenState();
-                    const currentShipping = document.querySelector('input[name="shippingType"]:checked');
-                    if (currentShipping && currentShipping.value === 'pickup') {
+                    if (document.querySelector('input[name="shippingType"]:checked').value === 'pickup') {
                         loadPickupOptions();
                     }
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {}
         }
 
         function loadPickupOptions() {
@@ -570,42 +599,59 @@
             select.innerHTML = locs.map(l => `<option value="${l}">${l}</option>`).join('');
         }
 
-        function closeTime() { return SETTINGS.closeAt ? new Date(SETTINGS.closeAt + ':00+07:00').getTime() : NaN; }
-        function isOpenNow() {
-            if (!SETTINGS.open) return false;
-            const t = closeTime();
-            return isNaN(t) || Date.now() < t;
-        }
-        function fmtDeadline(s) {
-            const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(s || '');
-            return m ? `${m[3]}/${m[2]}/${+m[1] + 543} เวลา ${m[4]}:${m[5]} น.` : '';
-        }
-        function applyOpenState() {
-            const open = isOpenNow();
-            document.getElementById('closedBanner').classList.toggle('hidden', open);
-            const dl = document.getElementById('deadlineText');
-            const txt = open ? fmtDeadline(SETTINGS.closeAt) : '';
-            dl.classList.toggle('hidden', !txt);
-            dl.innerText = txt ? 'ปิดรับออเดอร์ ' + txt : '';
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = !open;
-            btn.classList.toggle('opacity-60', !open);
-            btn.innerText = open ? 'ยืนยันคำสั่งซื้อ' : 'ปิดรับออเดอร์แล้ว';
-        }
-        setInterval(applyOpenState, 30000);
-
         function toggleShipping() {
             const shippingRadio = document.querySelector('input[name="shippingType"]:checked');
             const isHome = shippingRadio && shippingRadio.value === 'home';
-            
-            const addressBox = document.getElementById('addressBox');
-            const pickupBox = document.getElementById('pickupBox');
-            
-            if (addressBox) addressBox.style.display = isHome ? 'block' : 'none';
-            if (pickupBox) pickupBox.style.display = !isHome ? 'block' : 'none';
-            
+            document.getElementById('addressBox').style.display = isHome ? 'block' : 'none';
+            document.getElementById('pickupBox').style.display = !isHome ? 'block' : 'none';
             if (!isHome) loadPickupOptions();
             calc();
+        }
+
+        function generatePromptPayQR(target, amount) {
+            const cleanTarget = String(target || '').replace(/\D/g, '');
+            if (!cleanTarget) {
+                document.getElementById('promptpayQrImg').src = '';
+                return;
+            }
+
+            let formattedTarget = cleanTarget;
+            if (cleanTarget.length === 10) {
+                formattedTarget = '0066' + cleanTarget.substring(1);
+            }
+
+            function crc16(payload) {
+                let crc = 0xFFFF;
+                for (let i = 0; i < payload.length; i++) {
+                    let x = ((crc >> 8) ^ payload.charCodeAt(i)) & 0xFF;
+                    x ^= x >> 4;
+                    crc = ((crc << 8) ^ (x << 12) ^ (x << 5) ^ x) & 0xFFFF;
+                }
+                let hex = (crc & 0xFFFF).toString(16).toUpperCase();
+                while (hex.length < 4) hex = '0' + hex;
+                return hex;
+            }
+
+            let targetField = '';
+            if (formattedTarget.length === 13) {
+                targetField = '0016A000000677010111' + '0113' + formattedTarget;
+            } else {
+                targetField = '0016A000000677010111' + '0113' + '00' + formattedTarget;
+            }
+
+            const amtStr = Number(amount).toFixed(2);
+            let payload = 
+                '000201' +
+                '010211' +
+                '2937' + targetField +
+                '5802TH' +
+                '5303764' +
+                '54' + (amtStr.length < 10 ? '0' + amtStr.length : amtStr.length) + amtStr +
+                '6304';
+
+            payload += crc16(payload);
+            const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(payload);
+            document.getElementById('promptpayQrImg').src = qrUrl;
         }
 
         function calc() {
@@ -618,6 +664,10 @@
             document.getElementById('subtotalAmount').innerText = sub.toLocaleString() + ' บาท';
             document.getElementById('shippingFeeAmount').innerText = (isHome && !SETTINGS.shippingEnabled) ? 'ส่งฟรี' : fee.toLocaleString() + ' บาท';
             document.getElementById('totalAmount').innerText = tot.toLocaleString() + ' บาท';
+            
+            if (SETTINGS.promptpayId) {
+                generatePromptPayQR(SETTINGS.promptpayId, tot);
+            }
             return { sub, fee, tot };
         }
 
@@ -636,7 +686,6 @@
                 URL.revokeObjectURL(u);
                 checkOCR(f);
             };
-            img.onerror = () => { slipBase64 = ''; alert('ไม่สามารถอ่านไฟล์รูปนี้ได้ กรุณาเลือกรูปสลิปใหม่ค่ะ'); };
             img.src = u;
         }
 
@@ -645,7 +694,7 @@
             slipCheck = '';
             box.className = "text-xs p-3.5 rounded-xl bg-stone-100 text-stone-600 block font-light";
             box.innerHTML = 'กำลังตรวจสลิปเบื้องต้น...';
-            if (typeof Tesseract === 'undefined') { box.innerHTML = 'อัปโหลดสลิปเรียบร้อยแล้ว แอดมินจะตรวจสอบให้ค่ะ'; return; }
+            if (typeof Tesseract === 'undefined') { box.innerHTML = 'อัปโหลดสลิปเรียบร้อยแล้ว'; return; }
 
             Tesseract.recognize(f, 'tha+eng').then(({ data: { text } }) => {
                 const t = text.replace(/[,\s]/g, '');
@@ -653,41 +702,40 @@
                 const okWord = /สำเร็จ|successful/i.test(t);
                 const okAmt = t.includes(tot.toFixed(2)) || new RegExp('(^|\\D)' + tot + '(\\D|$)').test(t);
                 if (okWord && okAmt) {
-                    slipCheck = 'พบข้อความสำเร็จ + พบยอด ' + tot;
+                    slipCheck = 'พบยอด ' + tot;
                     box.className = "text-xs p-3.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 block";
-                    box.innerHTML = 'พบข้อความโอนสำเร็จและยอด ' + tot.toLocaleString() + ' บาทในสลิป (แอดมินจะตรวจซ้ำอีกครั้ง)';
+                    box.innerHTML = 'ตรวจสอบพบยอด ' + tot.toLocaleString() + ' บาทในสลิป';
                 } else {
-                    slipCheck = 'ตรวจไม่ผ่านอัตโนมัติ' + (okWord ? ' (ไม่พบยอด)' : '');
+                    slipCheck = 'ตรวจสอบด้วยตา';
                     box.className = "text-xs p-3.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 block";
-                    box.innerHTML = 'ระบบอ่านยอดหรือข้อความในสลิปไม่ได้ชัดเจน แอดมินจะตรวจสอบให้ค่ะ (ยังสั่งซื้อได้ตามปกติ)';
+                    box.innerHTML = 'อัปโหลดสลิปเรียบร้อยแล้ว แอดมินจะตรวจสอบยอดเงินให้อีกครั้ง';
                 }
             }).catch(() => {
-                slipCheck = 'OCR ไม่ทำงาน';
-                box.className = "text-xs p-3.5 rounded-xl bg-stone-100 text-stone-600 block";
-                box.innerHTML = 'อัปโหลดสลิปเรียบร้อยแล้ว แอดมินจะตรวจสอบให้ค่ะ';
+                box.innerHTML = 'อัปโหลดสลิปเรียบร้อยแล้ว';
             });
         }
 
         async function submitOrder(e) {
             e.preventDefault();
-            if (API_URL.startsWith('PASTE')) { alert('ยังไม่ได้ตั้งค่า API_URL ของ Google Apps Script'); return; }
-            if (!isOpenNow()) { applyOpenState(); alert('ขออภัย ปิดรับออเดอร์แล้วค่ะ'); return; }
-            if (cart.length === 0) { alert('กรุณาเลือกสินค้าและกดเพิ่มลงตะกร้าค่ะ'); return; }
-            if (!slipBase64) { alert('กรุณาแนบสลิปโอนเงินก่อนกดยืนยันค่ะ'); return; }
+            if (API_URL.startsWith('PASTE')) { alert('ยังไม่ได้ตั้งค่า API_URL'); return; }
+            if (cart.length === 0) { alert('ตะกร้าว่างเปล่า'); return; }
+            if (!slipBase64) { alert('กรุณาแนบสลิปโอนเงิน'); return; }
 
             const shippingRadio = document.querySelector('input[name="shippingType"]:checked');
             const shippingType = shippingRadio ? shippingRadio.value : 'pickup';
             let addressVal = '';
+            
             if (shippingType === 'home') {
-                addressVal = document.getElementById('custAddress').value.trim();
-                if (!addressVal) { alert('กรุณากรอกที่อยู่จัดส่งพัสดุค่ะ'); return; }
+                const detail = document.getElementById('addrDetail').value.trim();
+                const sub = document.getElementById('addrSubdistrict').value.trim();
+                const dist = document.getElementById('addrDistrict').value.trim();
+                const prov = document.getElementById('addrProvince').value.trim();
+                const zip = document.getElementById('addrZipcode').value.trim();
+                addressVal = `${detail} ต.${sub} อ.${dist} จ.${prov} ${zip}`;
             } else {
                 addressVal = 'มารับเอง: ' + document.getElementById('pickupLocationSelect').value;
             }
 
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.classList.add('opacity-60');
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
@@ -704,21 +752,14 @@
                     })
                 });
                 const r = await res.json();
-                if (!r.ok) throw new Error(r.error || 'บันทึกไม่สำเร็จ');
-                alert(`บันทึกคำสั่งซื้อเรียบร้อยแล้ว\nเลขที่ออเดอร์: ${r.id}\nยอดชำระ: ${r.total.toLocaleString()} บาท\nขอบคุณที่ร่วมสนับสนุนค่ะ`);
+                if (!r.ok) throw new Error(r.error);
+                alert(`สั่งซื้อสำเร็จ! เลขที่ออเดอร์: ${r.id}\nยอดชำระ: ${r.total.toLocaleString()} บาท`);
                 document.getElementById('orderForm').reset();
-                cart = [];
-                slipBase64 = "";
-                slipCheck = '';
-                reqId = newReqId();
+                cart = []; slipBase64 = ""; reqId = newReqId();
                 renderCart();
-                document.getElementById('ocrStatus').className = "hidden";
-                toggleShipping();
                 goToStep(1);
             } catch (err) {
-                alert('สั่งซื้อไม่สำเร็จ: ' + err.message + '\nกรุณาลองใหม่อีกครั้งค่ะ');
-            } finally {
-                applyOpenState();
+                alert('เกิดข้อผิดพลาด: ' + err.message);
             }
         }
     </script>
