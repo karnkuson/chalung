@@ -226,7 +226,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs text-stone-500 mb-1.5 font-light">รหัสไปรษณีย์</label>
-                                <input type="text" id="addrZipcode" placeholder="อัตโนมัติ" class="w-full px-4 py-3 bg-stone-100/80 rounded-2xl border border-stone-200 text-xs text-mono text-stone-800 font-bold">
+                                <input type="text" id="addrZipcode" placeholder="อัตโนมัติ" class="w-full px-4 py-3 bg-stone-100/80 rounded-2xl border border-stone-200 text-xs font-mono text-stone-800 font-bold">
                             </div>
                         </div>
                     </div>
@@ -238,7 +238,7 @@
                 </div>
             </div>
 
-            <!-- STEP 3: ชำระเงิน -->
+            <!-- STEP 3: ชำระเงิน (แสดงเลขบัญชี + ปุ่มคัดลอกเลขบัญชี ไม่มี QR Code) -->
             <div id="step3" class="step-content space-y-6">
                 <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs space-y-6">
                     <div class="border-b border-stone-100 pb-3">
@@ -246,53 +246,57 @@
                         <h3 class="text-lg font-semibold text-stone-900">ชำระเงินและแนบสลิป</h3>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                        <div class="bg-stone-50/70 p-6 rounded-3xl border border-stone-200/60 space-y-3 text-center">
-                            <span class="text-[11px] text-stone-500 font-light block">สแกนคิวอาร์โค้ดพร้อมเพย์เพื่อชำระเงิน</span>
+                    <div class="space-y-4 max-w-lg mx-auto">
+                        <!-- กล่องข้อมูลบัญชีธนาคารและปุ่มคัดลอก -->
+                        <div class="bg-stone-50/80 p-5 rounded-3xl border border-stone-200/80 space-y-3 text-center">
+                            <span class="text-[11px] text-stone-500 font-light block">ช่องทางการโอนเงินชำระค่าสินค้า</span>
                             
-                            <div class="p-3 bg-white rounded-2xl border border-stone-200/80 shadow-xs inline-block">
-                                <img id="promptpayQrImg" src="" alt="QR Code พร้อมเพย์" class="w-48 h-48 mx-auto object-contain">
+                            <div class="space-y-1">
+                                <p id="bankNameDisplay" class="font-semibold text-stone-900 text-sm">ธนาคาร: -</p>
+                                <p id="accountNoDisplay" class="font-mono text-xl font-bold text-stone-900 tracking-wider select-all">-</p>
+                                <p id="accountNameDisplay" class="text-xs text-stone-600 font-medium">ชื่อบัญชี: -</p>
+                                <p id="promptpayInfoDisplay" class="text-xs text-emerald-700 font-medium pt-1 hidden"></p>
                             </div>
 
-                            <div>
-                                <p id="promptpayInfo" class="font-semibold text-emerald-700 text-xs mt-2"></p>
-                                <p id="bankName" class="font-medium text-stone-900 text-xs hidden"></p>
-                                <p id="accountNo" class="font-mono text-sm font-bold text-stone-900 tracking-wider my-0.5 hidden"></p>
-                                <p id="accountName" class="text-[11px] text-stone-600 font-medium px-2 py-1 bg-stone-50 rounded-xl border border-stone-100 inline-block mt-1 hidden">ชื่อบัญชี: -</p>
+                            <div class="pt-1 flex flex-col sm:flex-row gap-2">
+                                <button type="button" id="btnCopyAcc" onclick="copyBankAccount()" class="flex-1 py-2.5 px-4 bg-stone-900 text-white rounded-xl text-xs font-medium hover:bg-stone-800 transition-all shadow-xs flex items-center justify-center space-x-1.5">
+                                    <span>📋 คัดลอกเลขบัญชี</span>
+                                </button>
+                                <button type="button" id="btnCopyPP" onclick="copyPromptPay()" class="hidden flex-1 py-2.5 px-4 bg-emerald-700 text-white rounded-xl text-xs font-medium hover:bg-emerald-800 transition-all shadow-xs flex items-center justify-center space-x-1.5">
+                                    <span>📋 คัดลอกพร้อมเพย์</span>
+                                </button>
                             </div>
-                            <button type="button" onclick="copyAccountNo()" class="w-full py-2 px-3 bg-stone-900 text-white rounded-xl text-xs font-medium hover:bg-stone-800 transition-all shadow-xs flex items-center justify-center space-x-1.5">
-                                <span>📋 คัดลอกเบอร์พร้อมเพย์</span>
-                            </button>
                         </div>
 
-                        <div class="space-y-4">
-                            <div class="bg-stone-50/80 p-4 rounded-2xl border border-stone-200/60 space-y-2 text-xs">
-                                <p class="font-medium text-stone-900 border-b border-stone-200/60 pb-1.5">📦 รายการสินค้าที่คุณเลือก</p>
-                                <div id="step3CartSummary" class="space-y-1.5 max-h-36 overflow-y-auto"></div>
-                            </div>
-
-                            <div class="bg-stone-50/80 p-4 rounded-2xl border border-stone-200/60 space-y-2 text-xs">
-                                <div class="flex justify-between text-stone-500 font-light">
-                                    <span>ค่าเสื้อรวม</span>
-                                    <span id="subtotalAmount" class="font-medium text-stone-800">0 บาท</span>
-                                </div>
-                                <div class="flex justify-between text-stone-500 font-light">
-                                    <span>ค่าจัดส่ง</span>
-                                    <span id="shippingFeeAmount" class="font-medium text-stone-800">50 บาท</span>
-                                </div>
-                                <div class="border-t border-stone-200/80 pt-2 flex justify-between text-sm font-medium text-stone-900">
-                                    <span>ยอดโอนสุทธิ</span>
-                                    <span id="totalAmount" class="text-emerald-700 font-bold text-base">50 บาท</span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs text-stone-500 mb-1.5 font-light">อัปโหลดหลักฐานการโอนเงิน (สลิป) <span class="text-red-400">*</span></label>
-                                <input type="file" id="slipFile" accept="image/*" onchange="handleSlip(event)" class="w-full text-xs text-stone-500 file:mr-3 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-medium file:bg-stone-900 file:text-white hover:file:bg-stone-800 cursor-pointer bg-stone-50/70 rounded-2xl border border-stone-200/80">
-                            </div>
-
-                            <div id="ocrStatus" class="hidden text-xs p-3.5 rounded-xl"></div>
+                        <!-- รายการสินค้าที่เลือก -->
+                        <div class="bg-stone-50/80 p-4 rounded-2xl border border-stone-200/60 space-y-2 text-xs">
+                            <p class="font-medium text-stone-900 border-b border-stone-200/60 pb-1.5">📦 รายการสินค้าที่คุณเลือก</p>
+                            <div id="step3CartSummary" class="space-y-1.5 max-h-36 overflow-y-auto"></div>
                         </div>
+
+                        <!-- สรุปยอดเงิน -->
+                        <div class="bg-stone-50/80 p-4 rounded-2xl border border-stone-200/60 space-y-2 text-xs">
+                            <div class="flex justify-between text-stone-500 font-light">
+                                <span>ค่าเสื้อรวม</span>
+                                <span id="subtotalAmount" class="font-medium text-stone-800">0 บาท</span>
+                            </div>
+                            <div class="flex justify-between text-stone-500 font-light">
+                                <span>ค่าจัดส่ง</span>
+                                <span id="shippingFeeAmount" class="font-medium text-stone-800">50 บาท</span>
+                            </div>
+                            <div class="border-t border-stone-200/80 pt-2 flex justify-between text-sm font-medium text-stone-900">
+                                <span>ยอดโอนสุทธิ</span>
+                                <span id="totalAmount" class="text-emerald-700 font-bold text-base">50 บาท</span>
+                            </div>
+                        </div>
+
+                        <!-- อัปโหลดสลิป -->
+                        <div>
+                            <label class="block text-xs text-stone-500 mb-1.5 font-light">อัปโหลดหลักฐานการโอนเงิน (สลิป) <span class="text-red-400">*</span></label>
+                            <input type="file" id="slipFile" accept="image/*" onchange="handleSlip(event)" class="w-full text-xs text-stone-500 file:mr-3 file:py-3 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-medium file:bg-stone-900 file:text-white hover:file:bg-stone-800 cursor-pointer bg-stone-50/70 rounded-2xl border border-stone-200/80">
+                        </div>
+
+                        <div id="ocrStatus" class="hidden text-xs p-3.5 rounded-xl"></div>
                     </div>
                 </div>
 
@@ -351,7 +355,7 @@
 
         renderSizeButtons();
         updateShirtPreview();
-        checkShippingConfig();
+        updatePaymentDisplay();
         calc();
         loadSettings();
 
@@ -389,9 +393,7 @@
                 
                 const detail = document.getElementById('addrDetail').value.trim();
                 const sub = document.getElementById('addrSubdistrict').value.trim();
-                const dist = document.getElementById('addrDistrict').value.trim();
                 const prov = document.getElementById('addrProvince').value.trim();
-                const zip = document.getElementById('addrZipcode').value.trim();
 
                 if (!name) { alert('กรุณากรอกชื่อ-นามสกุลค่ะ'); return; }
                 if (!phone || !/^\d{9,10}$/.test(phone)) { alert('กรุณากรอกเบอร์โทรศัพท์ 9-10 หลักให้ถูกต้องค่ะ'); return; }
@@ -401,6 +403,7 @@
                 }
                 
                 renderStep3Summary();
+                updatePaymentDisplay();
                 calc();
             }
 
@@ -552,9 +555,8 @@
             `).join('');
         }
 
-        function checkShippingConfig() {
+        function updatePaymentDisplay() {
             document.getElementById('shippingFeeText').innerText = SETTINGS.shippingEnabled ? `(+${SETTINGS.shippingFee} บาท)` : '(ส่งฟรี)';
-            document.getElementById('promptpayInfo').innerText = SETTINGS.promptpayId ? `📱 พร้อมเพย์: ${SETTINGS.promptpayId}` : '';
 
             const homeShippingLabel = document.getElementById('homeShippingLabel');
             const pickupRadio = document.querySelector('input[name="shippingType"][value="pickup"]');
@@ -565,13 +567,48 @@
             } else {
                 if (homeShippingLabel) homeShippingLabel.style.display = 'flex';
             }
+
+            // แสดงข้อมูลบัญชีธนาคาร
+            const bankNameEl = document.getElementById('bankNameDisplay');
+            const accNoEl = document.getElementById('accountNoDisplay');
+            const accNameEl = document.getElementById('accountNameDisplay');
+            const ppInfoEl = document.getElementById('promptpayInfoDisplay');
+            const btnCopyAcc = document.getElementById('btnCopyAcc');
+            const btnCopyPP = document.getElementById('btnCopyPP');
+
+            bankNameEl.innerText = SETTINGS.bankName ? `ธนาคาร${SETTINGS.bankName}` : 'บัญชีรับโอนเงิน';
+            accNoEl.innerText = SETTINGS.accountNo || SETTINGS.promptpayId || 'ยังไม่ได้กำหนดเลขบัญชี';
+            accNameEl.innerText = SETTINGS.accountName ? `ชื่อบัญชี: ${SETTINGS.accountName}` : '';
+
+            if (SETTINGS.accountNo) {
+                btnCopyAcc.classList.remove('hidden');
+            } else {
+                btnCopyAcc.classList.add('hidden');
+            }
+
+            if (SETTINGS.promptpayId) {
+                ppInfoEl.innerText = `พร้อมเพย์: ${SETTINGS.promptpayId}`;
+                ppInfoEl.classList.remove('hidden');
+                btnCopyPP.classList.remove('hidden');
+            } else {
+                ppInfoEl.classList.add('hidden');
+                btnCopyPP.classList.add('hidden');
+            }
         }
 
-        function copyAccountNo() {
-            const textToCopy = SETTINGS.promptpayId || SETTINGS.accountNo || '';
-            if (!textToCopy) { alert('ยังไม่ได้กำหนดเลขพร้อมเพย์'); return; }
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                alert('คัดลอกเบอร์พร้อมเพย์สำเร็จ: ' + textToCopy);
+        function copyBankAccount() {
+            const acc = (SETTINGS.accountNo || '').replace(/-/g, '').trim();
+            if (!acc) { alert('ยังไม่ได้กำหนดเลขที่บัญชีค่ะ'); return; }
+            navigator.clipboard.writeText(acc).then(() => {
+                alert('คัดลอกเลขที่บัญชีสำเร็จ: ' + SETTINGS.accountNo);
+            });
+        }
+
+        function copyPromptPay() {
+            const pp = (SETTINGS.promptpayId || '').replace(/-/g, '').trim();
+            if (!pp) { alert('ยังไม่ได้กำหนดเบอร์พร้อมเพย์ค่ะ'); return; }
+            navigator.clipboard.writeText(pp).then(() => {
+                alert('คัดลอกเบอร์พร้อมเพย์สำเร็จ: ' + SETTINGS.promptpayId);
             });
         }
 
@@ -581,7 +618,7 @@
                 try {
                     const c = JSON.parse(cached);
                     SETTINGS = { ...c, shippingEnabled: c.shippingEnabled === 'true', shippingFee: Number(c.shippingFee) || 0, open: c.open !== 'false' };
-                    checkShippingConfig();
+                    updatePaymentDisplay();
                     calc();
                 } catch (e) {}
             }
@@ -593,7 +630,7 @@
                     const c = r.config;
                     SETTINGS = { ...c, shippingEnabled: c.shippingEnabled === 'true', shippingFee: Number(c.shippingFee) || 0, open: c.open !== 'false' };
                     localStorage.setItem('chalung_settings', JSON.stringify(c));
-                    checkShippingConfig();
+                    updatePaymentDisplay();
                     calc();
                     if (document.querySelector('input[name="shippingType"]:checked').value === 'pickup') {
                         loadPickupOptions();
@@ -617,52 +654,6 @@
             calc();
         }
 
-        function generatePromptPayQR(target, amount) {
-            const cleanTarget = String(target || '').replace(/\D/g, '');
-            if (!cleanTarget) {
-                document.getElementById('promptpayQrImg').src = '';
-                return;
-            }
-
-            let formattedTarget = cleanTarget;
-            if (cleanTarget.length === 10) {
-                formattedTarget = '0066' + cleanTarget.substring(1);
-            }
-
-            function crc16(payload) {
-                let crc = 0xFFFF;
-                for (let i = 0; i < payload.length; i++) {
-                    let x = ((crc >> 8) ^ payload.charCodeAt(i)) & 0xFF;
-                    x ^= x >> 4;
-                    crc = ((crc << 8) ^ (x << 12) ^ (x << 5) ^ x) & 0xFFFF;
-                }
-                let hex = (crc & 0xFFFF).toString(16).toUpperCase();
-                while (hex.length < 4) hex = '0' + hex;
-                return hex;
-            }
-
-            let targetField = '';
-            if (formattedTarget.length === 13) {
-                targetField = '0016A000000677010111' + '0113' + formattedTarget;
-            } else {
-                targetField = '0016A000000677010111' + '0113' + '00' + formattedTarget;
-            }
-
-            const amtStr = Number(amount).toFixed(2);
-            let payload = 
-                '000201' +
-                '010211' +
-                '2937' + targetField +
-                '5802TH' +
-                '5303764' +
-                '54' + (amtStr.length < 10 ? '0' + amtStr.length : amtStr.length) + amtStr +
-                '6304';
-
-            payload += crc16(payload);
-            const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(payload);
-            document.getElementById('promptpayQrImg').src = qrUrl;
-        }
-
         function calc() {
             const sub = calculateTotalCartSubtotal();
             const shippingRadio = document.querySelector('input[name="shippingType"]:checked');
@@ -673,10 +664,6 @@
             document.getElementById('subtotalAmount').innerText = sub.toLocaleString() + ' บาท';
             document.getElementById('shippingFeeAmount').innerText = (isHome && !SETTINGS.shippingEnabled) ? 'ส่งฟรี' : fee.toLocaleString() + ' บาท';
             document.getElementById('totalAmount').innerText = tot.toLocaleString() + ' บาท';
-            
-            if (SETTINGS.promptpayId) {
-                generatePromptPayQR(SETTINGS.promptpayId, tot);
-            }
             return { sub, fee, tot };
         }
 
@@ -745,7 +732,6 @@
                 addressVal = 'มารับเอง: ' + document.getElementById('pickupLocationSelect').value;
             }
 
-            // แสดงหน้าจอ "กรุณารอสักครู่..." ทันทีที่กด
             document.getElementById('loadingOverlay').classList.remove('hidden');
 
             try {
@@ -765,7 +751,6 @@
                 });
                 const r = await res.json();
                 
-                // ซ่อนหน้าจอโหลดเมื่อเสร็จสิ้น
                 document.getElementById('loadingOverlay').classList.add('hidden');
 
                 if (!r.ok) throw new Error(r.error);
@@ -775,7 +760,6 @@
                 renderCart();
                 goToStep(1);
             } catch (err) {
-                // ซ่อนหน้าจอโหลดกรณีเกิดข้อผิดพลาด
                 document.getElementById('loadingOverlay').classList.add('hidden');
                 alert('เกิดข้อผิดพลาด: ' + err.message);
             }
