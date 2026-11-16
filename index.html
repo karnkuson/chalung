@@ -82,7 +82,7 @@
                 
                 <div class="bg-white p-5 rounded-3xl border border-stone-200/80 shadow-xs text-center space-y-3">
                     <div class="relative overflow-hidden rounded-2xl bg-stone-50 border border-stone-200/60 p-2 max-w-sm mx-auto flex items-center justify-center">
-                        <img id="shirtPreviewImg" src="" alt="ตัวอย่างเสื้อ" class="max-h-72 w-auto object-contain transition-all duration-300 drop-shadow-sm">
+                        <img id="shirtPreviewImg" src="" referrerpolicy="no-referrer" alt="ตัวอย่างเสื้อ" class="max-h-72 w-auto object-contain transition-all duration-300 drop-shadow-sm">
                     </div>
                     <p id="previewCaption" class="text-xs text-stone-700 font-medium bg-stone-100 py-1.5 px-4 rounded-full inline-block">ตัวอย่าง: คอวี แขนสั้น (สีน้ำเงิน)</p>
                 </div>
@@ -238,7 +238,7 @@
                 </div>
             </div>
 
-            <!-- STEP 3: ชำระเงิน (แสดงเลขบัญชี + ปุ่มคัดลอกเลขบัญชี ไม่มี QR Code) -->
+            <!-- STEP 3: ชำระเงิน -->
             <div id="step3" class="step-content space-y-6">
                 <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs space-y-6">
                     <div class="border-b border-stone-100 pb-3">
@@ -327,11 +327,12 @@
             { code: "6XL", bust: '52"' }, { code: "7XL", bust: '54"' }
         ];
 
+        // ใช้ลิงก์ Thumbnail ของ Google Drive ที่เสถียรและไม่โดนบล็อก CORS
         const shirtImages = {
-            "สีชมพู_คอวี แขนยาว": "https://lh3.googleusercontent.com/d/1Ke-nBQp6-PfPcAXh_UlU_Z0oTQ9_y9xH=s800",
-            "สีชมพู_คอวี แขนสั้น": "https://lh3.googleusercontent.com/d/1IRUD6w7looLr7jK4zxcDiaFHsUT5Xgur=s800",
-            "สีน้ำเงิน_คอวี แขนยาว": "https://lh3.googleusercontent.com/d/16JPwjU586BbEckfU2CnQhpJKWkULyV6g=s800",
-            "สีน้ำเงิน_คอวี แขนสั้น": "https://lh3.googleusercontent.com/d/1LW6_gYcOD6gbc4mgMTvhYPKJfdlQ8NPs=s800"
+            "สีชมพู_คอวี แขนยาว": "https://drive.google.com/thumbnail?id=1Ke-nBQp6-PfPcAXh_UlU_Z0oTQ9_y9xH&sz=w1000",
+            "สีชมพู_คอวี แขนสั้น": "https://drive.google.com/thumbnail?id=1IRUD6w7looLr7jK4zxcDiaFHsUT5Xgur&sz=w1000",
+            "สีน้ำเงิน_คอวี แขนยาว": "https://drive.google.com/thumbnail?id=16JPwjU586BbEckfU2CnQhpJKWkULyV6g&sz=w1000",
+            "สีน้ำเงิน_คอวี แขนสั้น": "https://drive.google.com/thumbnail?id=1LW6_gYcOD6gbc4mgMTvhYPKJfdlQ8NPs&sz=w1000"
         };
 
         let currentItem = { sleeve: "คอวี แขนสั้น", price: 199, color: "สีน้ำเงิน", size: "M", bust: '38"', qty: 1 };
@@ -568,7 +569,6 @@
                 if (homeShippingLabel) homeShippingLabel.style.display = 'flex';
             }
 
-            // แสดงข้อมูลบัญชีธนาคาร
             const bankNameEl = document.getElementById('bankNameDisplay');
             const accNoEl = document.getElementById('accountNoDisplay');
             const accNameEl = document.getElementById('accountNameDisplay');
