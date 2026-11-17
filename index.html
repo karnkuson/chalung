@@ -130,7 +130,9 @@
                             <span id="selectedSizeText" class="text-[11px] font-medium text-stone-500">ไซส์: M (รอบอก 38")</span>
                         </div>
                         <div class="grid grid-cols-4 md:grid-cols-7 gap-2 text-center" id="sizeContainer"></div>
-                        <p class="text-[10px] text-stone-400 mt-2">ℹ️ หมายเหตุ: ไซส์พิเศษ 5XL ขึ้นไป (5XL, 6XL, 7XL) เพิ่ม +50 บาท | ตัวที่ 2 ขึ้นไป เพิ่ม 10 บาท/ตัว (เฉพาะจัดส่งถึงบ้าน)</p>
+                        <p class="text-[10px] text-stone-500 mt-2 leading-relaxed">
+                            ℹ️ <strong>หมายเหตุ:</strong> ไซส์พิเศษ 5XL ขึ้นไป (5XL, 6XL, 7XL) เพิ่ม +50 บาท | ตัวที่ 2 ขึ้นไป <strong>เพิ่ม +10 บาท/ตัว เฉพาะกรณีจัดส่งไปรษณีย์ (ถ้ารับเองที่เทศบาลไม่มีบวกเพิ่มค่ะ)</strong>
+                        </p>
                     </div>
 
                     <div class="pt-4 border-t border-stone-100 flex items-center gap-3">
@@ -185,11 +187,11 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <label class="flex items-center p-4 rounded-2xl border border-stone-200/80 bg-stone-50/40 cursor-pointer hover:border-stone-400 transition-all text-xs" id="homeShippingLabel">
                                 <input type="radio" name="shippingType" value="home" checked onchange="toggleShipping()" class="text-stone-900 focus:ring-0">
-                                <span class="ml-3 text-stone-900 font-medium">จัดส่งถึงบ้าน <span class="text-stone-400 font-light" id="shippingFeeText">(+50 บาท)</span></span>
+                                <span class="ml-3 text-stone-900 font-medium">จัดส่งไปรษณีย์ถึงบ้าน <span class="text-stone-400 font-light" id="shippingFeeText">(+50 บาท)</span></span>
                             </label>
                             <label class="flex items-center p-4 rounded-2xl border border-stone-200/80 bg-stone-50/40 cursor-pointer hover:border-stone-400 transition-all text-xs">
                                 <input type="radio" name="shippingType" value="pickup" onchange="toggleShipping()" class="text-stone-900 focus:ring-0">
-                                <span class="ml-3 text-stone-900 font-medium">มารับเอง <span class="text-emerald-600 font-light">(ฟรี / ไม่บวกเพิ่ม 10 บาท)</span></span>
+                                <span class="ml-3 text-stone-900 font-medium">มารับเองที่เทศบาล <span class="text-emerald-600 font-light">(ฟรี / ไม่บวกเพิ่ม 10 บาท)</span></span>
                             </label>
                         </div>
                     </div>
@@ -370,8 +372,6 @@
                 const basePrice = (item.sleeve === 'คอวี แขนยาว') ? 250 : 199;
                 for (let i = 0; i < item.qty; i++) {
                     let price = basePrice;
-                    // ถ้าจัดส่งถึงบ้าน หรือเลือกรับเอง แต่ถ้าเงื่อนไขคือ "ถ้ารับเองที่เทศบาล ไม่ต้อง +10 บาท"
-                    // จะทำการบวก +10 บาทเฉพาะเมื่อจัดส่งถึงบ้าน (isHome === true) เท่านั้น
                     if (isHome && currentShirtIndex > 0) price += 10;
                     if (['5XL', '6XL', '7XL'].includes(item.size)) price += 50;
                     totalSub += price;
@@ -532,7 +532,7 @@
 
                 let extraNotes = [];
                 if (['5XL', '6XL', '7XL'].includes(item.size)) extraNotes.push('ไซส์พิเศษ 5XL+ เพิ่ม +50.-');
-                if (isHome && totalShirtCount > 1) extraNotes.push('ตัวที่ 2+ เพิ่ม +10.-/ตัว');
+                if (isHome && totalShirtCount > 1) extraNotes.push('ตัวที่ 2+ เพิ่ม +10.-/ตัว (ส่งไปรษณีย์)');
                 let noteHtml = extraNotes.length > 0 ? `<span class="text-amber-700 text-[10px] block mt-0.5 font-medium">ℹ️ (${extraNotes.join(' | ')})</span>` : '';
 
                 return `
@@ -659,7 +659,7 @@
             document.getElementById('addressBox').style.display = isHome ? 'block' : 'none';
             document.getElementById('pickupBox').style.display = !isHome ? 'block' : 'none';
             if (!isHome) loadPickupOptions();
-            renderCart(); // อัปเดตการแสดงผลราคาในตะกร้าเมื่อเปลี่ยนรูปแบบการรับสินค้า
+            renderCart();
             calc();
         }
 
