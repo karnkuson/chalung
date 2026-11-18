@@ -77,7 +77,7 @@
 
         <form id="orderForm" onsubmit="submitOrder(event)">
             
-            <!-- STEP 1: เลือกสินค้า -->
+            <!-- STEP 1: เลือกสินค้า + รูปแบบการรับสินค้า -->
             <div id="step1" class="step-content active space-y-6">
                 
                 <div class="bg-white p-5 rounded-3xl border border-stone-200/80 shadow-xs text-center space-y-3">
@@ -147,6 +147,22 @@
                     </div>
                 </div>
 
+                <!-- ย้ายกล่องเลือกวิธีการรับสินค้ามาไว้หน้าแรก (Step 1) -->
+                <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs space-y-3">
+                    <label class="block text-xs text-stone-800 font-semibold">4. เลือกวิธีการรับสินค้า <span class="text-red-400">*</span></label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <label class="flex items-center p-4 rounded-2xl border border-stone-200/80 bg-stone-50/40 cursor-pointer hover:border-stone-400 transition-all text-xs">
+                            <input type="radio" name="shippingType" value="pickup" checked onchange="toggleShipping()" class="text-stone-900 focus:ring-0">
+                            <span class="ml-3 text-stone-900 font-medium">มารับเองที่เทศบาล <span class="text-emerald-600 font-light">(ฟรี / ไม่บวกเพิ่ม)</span></span>
+                        </label>
+                        <label class="flex items-center p-4 rounded-2xl border border-stone-200/80 bg-stone-50/40 cursor-pointer hover:border-stone-400 transition-all text-xs" id="homeShippingLabel">
+                            <input type="radio" name="shippingType" value="home" onchange="toggleShipping()" class="text-stone-900 focus:ring-0">
+                            <span class="ml-3 text-stone-900 font-medium">จัดส่งไปรษณีย์ถึงบ้าน <span class="text-stone-400 font-light" id="shippingFeeText">(+50 บาท)</span></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ตะกร้าสินค้า -->
                 <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
                     <div class="flex justify-between items-center border-b border-stone-100 pb-3">
                         <h3 class="text-xs font-semibold text-stone-900 uppercase tracking-widest">ตะกร้าสินค้าของคุณ</h3>
@@ -168,7 +184,7 @@
                 <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-xs space-y-4">
                     <div class="border-b border-stone-100 pb-3">
                         <span class="text-[10px] text-stone-400 block uppercase tracking-wider font-light">ขั้นตอนที่ 2</span>
-                        <h3 class="text-lg font-semibold text-stone-900">ระบุชื่อ-สกุล และที่อยู่จัดส่ง</h3>
+                        <h3 class="text-lg font-semibold text-stone-900">ระบุชื่อ-สกุล และสถานที่รับ/จัดส่ง</h3>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -182,29 +198,15 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs text-stone-500 mb-2 font-light">วิธีการรับสินค้า <span class="text-red-400">*</span></label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <label class="flex items-center p-4 rounded-2xl border border-stone-200/80 bg-stone-50/40 cursor-pointer hover:border-stone-400 transition-all text-xs" id="homeShippingLabel">
-                                <input type="radio" name="shippingType" value="home" checked onchange="toggleShipping()" class="text-stone-900 focus:ring-0">
-                                <span class="ml-3 text-stone-900 font-medium">จัดส่งไปรษณีย์ถึงบ้าน <span class="text-stone-400 font-light" id="shippingFeeText">(+50 บาท)</span></span>
-                            </label>
-                            <label class="flex items-center p-4 rounded-2xl border border-stone-200/80 bg-stone-50/40 cursor-pointer hover:border-stone-400 transition-all text-xs">
-                                <input type="radio" name="shippingType" value="pickup" onchange="toggleShipping()" class="text-stone-900 focus:ring-0">
-                                <span class="ml-3 text-stone-900 font-medium">มารับเองที่เทศบาล <span class="text-emerald-600 font-light">(ฟรี / ไม่บวกเพิ่ม)</span></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- จุดรับเอง -->
-                    <div id="pickupBox" class="pt-1" style="display: none;">
+                    <!-- จุดรับเอง (แสดงอัตโนมัติถ้าเลือกมารับเองจากหน้าแรก) -->
+                    <div id="pickupBox" class="pt-1">
                         <label class="block text-xs text-stone-500 mb-1.5 font-light">เลือกจุดมารับสินค้าเอง <span class="text-red-400">*</span></label>
                         <select id="pickupLocationSelect" class="w-full px-4 py-3 bg-stone-50/70 rounded-2xl border border-stone-200/80 text-xs focus:bg-white focus:outline-none focus:border-stone-400 transition-all">
                         </select>
                     </div>
 
-                    <!-- ที่อยู่จัดส่งแบบพิมพ์ค้นหาอัตโนมัติ -->
-                    <div id="addressBox" class="space-y-3 pt-1">
+                    <!-- ที่อยู่จัดส่งแบบพิมพ์ค้นหาอัตโนมัติ (แสดงอัตโนมัติถ้าเลือกจัดส่งไปรษณีย์จากหน้าแรก) -->
+                    <div id="addressBox" class="space-y-3 pt-1" style="display: none;">
                         <div>
                             <label class="block text-xs text-stone-500 mb-1.5 font-light">บ้านเลขที่, หมู่บ้าน/อาคาร, ซอย, ถนน <span class="text-red-400">*</span></label>
                             <input type="text" id="addrDetail" placeholder="เช่น 123/4 หมู่ 5 ซอยเพชรเกษม 2" class="w-full px-4 py-3 bg-stone-50/70 rounded-2xl border border-stone-200/80 text-xs focus:bg-white focus:outline-none focus:border-stone-400 transition-all">
@@ -284,11 +286,11 @@
                             </div>
                             <div class="flex justify-between text-stone-500 font-light">
                                 <span>ค่าจัดส่ง</span>
-                                <span id="shippingFeeAmount" class="font-medium text-stone-800">50 บาท</span>
+                                <span id="shippingFeeAmount" class="font-medium text-stone-800">0 บาท</span>
                             </div>
                             <div class="border-t border-stone-200/80 pt-2 flex justify-between text-sm font-medium text-stone-900">
                                 <span>ยอดโอนสุทธิ</span>
-                                <span id="totalAmount" class="text-emerald-700 font-bold text-base">50 บาท</span>
+                                <span id="totalAmount" class="text-emerald-700 font-bold text-base">0 บาท</span>
                             </div>
                         </div>
 
@@ -329,7 +331,6 @@
             { code: "6XL", bust: '52"' }, { code: "7XL", bust: '54"' }
         ];
 
-        // ใช้ลิงก์ Thumbnail ของ Google Drive ที่เสถียรและไม่โดนบล็อก CORS
         const shirtImages = {
             "สีชมพู_คอวี แขนยาว": "https://drive.google.com/thumbnail?id=1Ke-nBQp6-PfPcAXh_UlU_Z0oTQ9_y9xH&sz=w1000",
             "สีชมพู_คอวี แขนสั้น": "https://drive.google.com/thumbnail?id=1IRUD6w7looLr7jK4zxcDiaFHsUT5Xgur&sz=w1000",
@@ -359,7 +360,7 @@
         renderSizeButtons();
         updateShirtPreview();
         updatePaymentDisplay();
-        calc();
+        toggleShipping();
         loadSettings();
 
         function calculateTotalCartSubtotal() {
@@ -390,7 +391,10 @@
         }
 
         function goToStep(stepNum) {
-            if (stepNum === 2 && cart.length === 0) { alert('กรุณาเลือกสินค้าและกดเพิ่มลงตะกร้าก่อนค่ะ'); return; }
+            if (stepNum === 2) {
+                if (cart.length === 0) { alert('กรุณาเลือกสินค้าและกดเพิ่มลงตะกร้าก่อนค่ะ'); return; }
+                toggleShipping(); // อัปเดตกล่องจุดรับหรือที่อยู่ให้ตรงกับที่เลือกใน Step 1
+            }
             if (stepNum === 3) {
                 const name = document.getElementById('custName').value.trim();
                 const phone = document.getElementById('custPhone').value.trim();
@@ -743,6 +747,8 @@
 
             document.getElementById('loadingOverlay').classList.remove('hidden');
 
+            const currentCalculated = calc();
+
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
@@ -753,6 +759,9 @@
                         shippingType: shippingType,
                         address: addressVal,
                         items: cart.map(c => ({ sleeve: c.sleeve, color: c.color, size: c.size, qty: c.qty })),
+                        subtotal: currentCalculated.sub,
+                        shipping: currentCalculated.fee,
+                        total: currentCalculated.tot,
                         slip: slipBase64,
                         slipCheck: slipCheck,
                         reqId: reqId
@@ -763,9 +772,10 @@
                 document.getElementById('loadingOverlay').classList.add('hidden');
 
                 if (!r.ok) throw new Error(r.error);
-                alert(`สั่งซื้อสำเร็จ! เลขที่ออเดอร์: ${r.id}\nยอดชำระ: ${r.total.toLocaleString()} บาท`);
+                alert(`สั่งซื้อสำเร็จ! เลขที่ออเดอร์: ${r.id}\nยอดชำระ: ${currentCalculated.tot.toLocaleString()} บาท`);
                 document.getElementById('orderForm').reset();
                 cart = []; slipBase64 = ""; reqId = newReqId();
+                toggleShipping();
                 renderCart();
                 goToStep(1);
             } catch (err) {
